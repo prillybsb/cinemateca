@@ -1,0 +1,49 @@
+
+.form-cadastro{
+    margin: 50px;
+        
+}
+
+#btn_cadastro{
+    margin: 50px;
+}
+
+.form-cadastro2{
+    margin: 50px;
+}
+
+#btn_cadastro_categoria{
+    margin: 50px;
+}
+
+.form-cadastro3{
+    margin: 50px;
+}
+
+#btn_cadastro_direcao{
+    margin: 50px;
+}
+
+.btn-primary{
+    margin:40px;
+}
+
+.form-group{
+    margin: 100px;
+}
+
+h2{
+    text-align: center;
+    padding: 40px;
+    color: purple;
+    font-weight: 500;
+    
+}
+
+.btn_categoria{
+    display: flex;
+    justify-content: center;
+    margin: 60px;
+}
+
+

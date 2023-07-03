@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filmes</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="/assents/css/style.css">
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+</head>
+
+<body>
+
+
+
+  <h2>Cadastro de Filmes</h2>
+
+  <div class="">
+    <div id="alert-save" style="display: none;" class="alert alert-success" role="alert">
+      SALVEI PRI!
+    </div>
+    <div class="row">
+      <div class="col-sm">
+        <div class="form-cadastro">
+          <form class="form">
+
+            <input type="hidden" id="id" value="">
+
+            <div class="mb-3">
+              <label for="nome" class="form-label">Novo Filme</label>
+              <input type="text" class="form-control" id="nome">
+              <div id="emailHelp" class="form-text"></div>
+            </div>
+
+            <div class="mb-3">
+
+              <label for="categoria" class="form-label">Categoria</label>
+
+              <select class="form-control" id="categoria">
+                <option value="">Selecione</option>
+              </select>
+
+
+            </div>
+
+            <div class="mb-3">
+              <label for="direcao" class="form-label">Direção</label>
+              <select class="form-control" id="direcao">
+                <option value="">Selecione</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="nacionalidade" class="form-label">Nacionalidade</label>
+              <input type="text" class="form-control" id="nacionalidade">
+            </div>
+
+            <div class="mb-3">
+              <label for="data" class="form-label">Data de Estreia</label>
+              <input type="text" class="form-control" id="data">
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+            </div>
+
+            <div class="mb-3">
+              <label for="gasto" class="form-label">Gasto com a Produção do Filme</label>
+              <input type="text" class="form-control" id="gasto">
+            </div>
+
+
+
+            <button type="submit" class="btn btn-primary" id="btn_enviar">Enviar</button>
+            <button type="button" class="btn btn-primary" id="btn_voltar">Voltar</button>
+          </form>
+        </div>
+      </div>
+      <div class="col-sm">
+        <table id="example" class="display" style="width:100%">
+          <thead>
+
+            <tr>
+              <th>ID</th>
+              <th>Filme Cadastrado</th>
+              <th>Diretor Cadastrado</th>
+              <th>Categoria Cadastrada</th>
+              <th>Nacionalidade</th>
+              <th>Data de Estreia</th>
+              <th>Gasto com a Produção do Filme</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+
+
+
+</body>
+
+<script>
+
+  $(document).ready(function () {
+
+    var t = $('#example').DataTable({
+      language: {
+        processing: "Aguarde...",
+        search: "Buscar:",
+        zeroRecords: "Nunhum Registro Encontrado",
+        paginate: {
+          first: "<<",
+          previous: "<",
+          next: ">",
+          last: "<<"
+        },
+        aria: {
+          sortAscending: ": activer pour trier la colonne par ordre croissant",
+          sortDescending: ": activer pour trier la colonne par ordre décroissant"
+        }
+      }
+    });
+
+    $("#btn_voltar").click(function () {
+      window.location.href = "index.html";
+    });
+
+    if (localStorage.getItem("filmes") != null) {
+      var filmes = JSON.parse(localStorage.getItem('filmes'));
+
+      $.each(filmes, function (key, value) {
+
+        console.log("key " + key + " - Value " + value.nome);
+
+        t.row.add([
+          value.id,
+          value.nome,
+          value.direcao,
+          value.categoria,
+          value.nacionalidade,
+          value.data,
+          value.gasto,
+          '<button id-filme="' + value.id + '" class="btnEditar">Editar</button>',
+          '<button id="btnExcluir" class="btn_excluir">excluir</button>',]
+        ).draw(false);
+
+      });
+
+
+    }
+
+    if (localStorage.getItem("categorias") != null) {
+
+      var categorias = JSON.parse(localStorage.getItem('categorias'));
+
+      console.log(categorias);
+
+      $.each(categorias, function (key, value) {
+        $('#categoria')
+          .append($("<option></option>")
+            .attr("value", value.nome)
+            .text(value.nome));
+      });
+
+    }
+
+    if (localStorage.getItem("diretores") != null) {
+
+      var diretores = JSON.parse(localStorage.getItem('diretores'));
+
+      console.log(diretores);
+
+      $.each(diretores, function (key, value) {
+        $('#direcao')
+          .append($("<option></option>")
+            .attr("value", value.nome)
+            .text(value.nome));
+      });
+
+    }
+
+
+    $("body").on("click", "#btn_enviar", function () {
+
+      var filmes = [];
+      //captura os dados do banco
+      var lsFilmes = localStorage.getItem("filmes");
+
+      //se o banco existir, transforma o banco que é um texto em Javascript object notation JSON
+      if (lsFilmes != null && lsFilmes != "") {
+        filmes = JSON.parse(lsFilmes)
+      }
+
+
+
+      var idFilme = $("#id").val()
+
+      if (idFilme) {
+        for (let i = 0; i < filmes.length; i++) {
+          if (idFilme == filmes[i].id) {
+            filmes[i].nome = $("#nome").val()
+            filmes[i].categoria = $("#categoria").val()
+            filmes[i].direcao = $("#direcao").val()
+            filmes[i].nacionalidade = $("#nacionalidade").val()
+            filmes[i].data = $("#data").val()
+            filmes[i].gasto = $("#gasto").val()
+            break
+          }
+
+        }
+      } else {
+
+        var filme = {
+          id: filmes.length + 1,
+          nome: $("#nome").val(),
+          categoria: $("#categoria").val(),
+          direcao: $("#direcao").val(),
+          nacionalidade: $("#nacionalidade").val(),
+          data: $("#data").val(),
+          gasto: $("#gasto").val()
+        }
+
+        //salve o categoria como um novo indice em categorias
+        filmes.push(filme)
+      }
+
+      //transformo o categorias em texto novamente e salvo no banco denovo
+      localStorage.setItem("filmes", JSON.stringify(filmes));
+
+      $('#alert-save').fadeIn();
+      alert('Salvei');
+
+    });
+
+    $("body").on("click", ".btnEditar", function () {
+
+      var id = $(this).attr("id-filme"); // obter o valor do atributo "id" do botão clicado
+      alert("ID: " + id); // exibir o valor do ID no alerta]
+
+      var filmes = [];
+      //captura os dados do banco
+      var lsFilmes = localStorage.getItem("filmes");
+
+      //se o banco existir, transforma o banco que é um texto em Javascript object notation JSON
+      if (lsFilmes != null && lsFilmes != "") {
+        filmes = JSON.parse(lsFilmes)
+      }
+
+      //for ou um each
+      //com um if que verifica se o id da passada é igual o seu id
+      //se verdadeiro, daria um console.log
+
+      for (let i = 0; i < filmes.length; i++) {
+        if (id == filmes[i].id) {
+          console.log(filmes[id]);
+          $("#id").val(filmes[i].id);
+          $("#nome").val(filmes[i].nome);
+          $("#categoria").val(filmes[i].categoria);
+          $("#direcao").val(filmes[i].direcao);
+          $("#nacionalidade").val(filmes[i].nacionalidade);
+          $("#data").val(filmes[i].data);
+          $("#gasto").val(filmes[i].gasto);
+        }
+
+      }
+
+    });
+
+    /*$('form input, form select').each(function() {
+    // obtém o nome do campo
+    var campo = $("#id").val('id');
+
+   if (localStorage.getItem("filmes")!=null) ;
+   var campo = JSON.parse(localStorage.getItem('filmes'))
+
+   $('.form-control').val(campo[1].nome)
+       
+     
+
+    });*/
+
+
+
+
+    /* $(".btn_editar").click(function () {
+   var row = $(this).closest("tr");
+   row.children("td").each(function () {
+     var novoValor = prompt("Digite um novo valor para a célula:", $(this).text());
+     $(this).text(novoValor);
+   });
+ });*/
+
+    /*$('.btn_excluir').click(function () {
+      $("table")
+        .DataTable()
+        .row($(this).parents('tr'))
+        .remove()
+        .draw();
+ 
+ 
+    });
+ 
+   // localStorage.setItem('filmes', JSON.stringify(filmes));
+   // filmes.splice(0, 1);*/
+
+
+  });
+
+
+
+
+
+
+
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+  integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+
+</html>
